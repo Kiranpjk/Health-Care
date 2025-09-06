@@ -1,6 +1,5 @@
 import sql from "../config/db.js";
 
-// Add a new doctor
 export const addDoctor = async (req, res) => {
   try {
     const { name, specialization } = req.body;
@@ -18,7 +17,6 @@ export const addDoctor = async (req, res) => {
   }
 };
 
-// Get all doctors
 export const getDoctors = async (req, res) => {
   try {
     const doctors = await sql`SELECT * FROM doctors`;
@@ -29,7 +27,6 @@ export const getDoctors = async (req, res) => {
   }
 };
 
-// Get single doctor
 export const getDoctor = async (req, res) => {
   try {
     const doctor = await sql`
@@ -43,7 +40,6 @@ export const getDoctor = async (req, res) => {
   }
 };
 
-// Update doctor
 export const updateDoctor = async (req, res) => {
   try {
     const { name, specialization } = req.body;
@@ -63,7 +59,6 @@ export const updateDoctor = async (req, res) => {
   }
 };
 
-// Delete doctor
 export const deleteDoctor = async (req, res) => {
   try {
     const deleted = await sql`

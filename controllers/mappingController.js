@@ -1,6 +1,5 @@
 import sql from "../config/db.js";
 
-// Assign doctor to patient
 export const assignDoctor = async (req, res) => {
   try {
     const { patient_id, doctor_id } = req.body;
@@ -18,7 +17,6 @@ export const assignDoctor = async (req, res) => {
   }
 };
 
-// Get all mappings
 export const getMappings = async (req, res) => {
   try {
     const mappings = await sql`
@@ -31,7 +29,6 @@ export const getMappings = async (req, res) => {
   }
 };
 
-// Get all doctors for a patient
 export const getPatientDoctors = async (req, res) => {
   try {
     const doctors = await sql`
@@ -47,7 +44,6 @@ export const getPatientDoctors = async (req, res) => {
   }
 };
 
-// Remove a doctor from a patient
 export const removeMapping = async (req, res) => {
   try {
     const deleted = await sql`

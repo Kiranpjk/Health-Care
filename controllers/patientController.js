@@ -1,6 +1,5 @@
 import sql from "../config/db.js";
 
-// Add a new patient
 export const addPatient = async (req, res) => {
   try {
     const { name, age, gender } = req.body;
@@ -18,7 +17,6 @@ export const addPatient = async (req, res) => {
   }
 };
 
-// Get all patients for logged-in user
 export const getPatients = async (req, res) => {
   try {
     const patients = await sql`
@@ -31,7 +29,6 @@ export const getPatients = async (req, res) => {
   }
 };
 
-// Get single patient
 export const getPatient = async (req, res) => {
   try {
     const patient = await sql`
@@ -45,7 +42,6 @@ export const getPatient = async (req, res) => {
   }
 };
 
-// Update patient
 export const updatePatient = async (req, res) => {
   try {
     const { name, age, gender } = req.body;
@@ -65,7 +61,6 @@ export const updatePatient = async (req, res) => {
   }
 };
 
-// Delete patient
 export const deletePatient = async (req, res) => {
   try {
     const deleted = await sql`

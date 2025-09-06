@@ -1,6 +1,5 @@
 import sql from "../config/db.js";
 
-// Ensure patient_doctor_mappings table exists
 export const initMappingTable = async () => {
   await sql`
     CREATE TABLE IF NOT EXISTS patient_doctor_mappings (
