@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-healthcare}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-healthcare}
+      POSTGRES_DB: ${POSTGRES_DB:-healthcare}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    image: ghcr.io/kiranpjk/health-care:local
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 5000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-healthcare}:${POSTGRES_PASSWORD:-healthcare}@db:5432/${POSTGRES_DB:-healthcare}
+      DB_SSL: "false"
+      # Local-dev default only. Set a real value in your shell or a .env file.
+      JWT_SECRET: ${JWT_SECRET:-dev-only-change-me}
+    ports:
+      - "${API_PORT:-5000}:5000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  db-data:
