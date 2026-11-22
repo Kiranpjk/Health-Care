@@ -7,13 +7,15 @@ import {
   deletePatient,
 } from "../controllers/patientController.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { validateId, validatePatient } from "../middleware/validateMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", protect, addPatient);
-router.get("/", protect, getPatients);
-router.get("/:id", protect, getPatient);
-router.put("/:id", protect, updatePatient);
-router.delete("/:id", protect, deletePatient);
+router.use(protect);
+router.post("/", validatePatient(), addPatient);
+router.get("/", getPatients);
+router.get("/:id", validateId(), getPatient);
+router.put("/:id", validateId(), validatePatient(true), updatePatient);
+router.delete("/:id", validateId(), deletePatient);
 
 export default router;

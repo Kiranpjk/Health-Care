@@ -1,4 +1,5 @@
 import sql from "../config/db.js";
+import { handleDbError } from "../utils/dbErrors.js";
 
 export const addDoctor = async (req, res) => {
   try {
@@ -12,18 +13,16 @@ export const addDoctor = async (req, res) => {
 
     res.status(201).json(result[0]);
   } catch (error) {
-    console.error("❌ Add doctor error:", error);
-    res.status(500).json({ message: "Server error" });
+    handleDbError(res, error, "Add doctor");
   }
 };
 
 export const getDoctors = async (req, res) => {
   try {
-    const doctors = await sql`SELECT * FROM doctors`;
+    const doctors = await sql`SELECT * FROM doctors ORDER BY id`;
     res.json(doctors);
   } catch (error) {
-    console.error("❌ Get doctors error:", error);
-    res.status(500).json({ message: "Server error" });
+    handleDbError(res, error, "Get doctors");
   }
 };
 
@@ -35,18 +34,19 @@ export const getDoctor = async (req, res) => {
     if (!doctor[0]) return res.status(404).json({ message: "Doctor not found" });
     res.json(doctor[0]);
   } catch (error) {
-    console.error("❌ Get doctor error:", error);
-    res.status(500).json({ message: "Server error" });
+    handleDbError(res, error, "Get doctor");
   }
 };
 
 export const updateDoctor = async (req, res) => {
   try {
-    const { name, specialization } = req.body;
+    const { name = null, specialization = null } = req.body;
 
+    // COALESCE keeps the current value for fields that were not sent.
     const updated = await sql`
       UPDATE doctors
-      SET name = ${name}, specialization = ${specialization}
+      SET name = COALESCE(${name}, name),
+          specialization = COALESCE(${specialization}, specialization)
       WHERE id = ${req.params.id}
       RETURNING *;
     `;
@@ -54,8 +54,7 @@ export const updateDoctor = async (req, res) => {
     if (!updated[0]) return res.status(404).json({ message: "Doctor not found" });
     res.json(updated[0]);
   } catch (error) {
-    console.error("❌ Update doctor error:", error);
-    res.status(500).json({ message: "Server error" });
+    handleDbError(res, error, "Update doctor");
   }
 };
 
@@ -67,7 +66,6 @@ export const deleteDoctor = async (req, res) => {
     if (!deleted[0]) return res.status(404).json({ message: "Doctor not found" });
     res.json({ message: "Doctor deleted successfully" });
   } catch (error) {
-    console.error("❌ Delete doctor error:", error);
-    res.status(500).json({ message: "Server error" });
+    handleDbError(res, error, "Delete doctor");
   }
 };
